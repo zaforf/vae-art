@@ -1,6 +1,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-<div style="display: flex; align-items: center; justify-content: center;">
-  <div style="font-size: 80px; padding-bottom: 10px;">Zafir</div>
+<div style="display: flex; align-items: center; justify-content: center; background-color: #3cb043;">
+  <div style="font-size: 80px; padding-bottom: 15px;">Zafir</div>
   <canvas id="canvas" width="224" height="224"></canvas>
 </div>
 
@@ -9,7 +9,7 @@
   const canvas = document.getElementById('canvas');
 
   async function loadModel() {
-    model = await tf.loadGraphModel('web_decoder_model/model.json');
+    model = await tf.loadGraphModel('small_decoder/model.json');
     console.log("Model loaded");
   }
 
@@ -30,8 +30,8 @@
   document.addEventListener('mousemove', (e) => {
     if (!model) return;
 
-    const min_x = -15, max_x = 11;
-    const min_y = -13, max_y = 5;
+    const min_x = -10, max_x = 1;
+    const min_y = -2.5, max_y = 9;
     const z0 = ((e.clientX - 0) / window.innerWidth) * (max_x - min_x) + min_x;
     const z1 = ((e.clientY - 0) / window.innerHeight) * (max_y - min_y) + min_y;
     predictFromLatent(z0, z1);
