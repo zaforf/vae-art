@@ -1,0 +1,41 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<div style="display: flex; align-items: center; justify-content: center;">
+  <div style="font-size: 80px; padding-bottom: 10px;">Zafir</div>
+  <canvas id="canvas" width="224" height="224"></canvas>
+</div>
+
+<script>
+  let model;
+  const canvas = document.getElementById('canvas');
+
+  async function loadModel() {
+    model = await tf.loadGraphModel('web_decoder_model/model.json');
+    console.log("Model loaded");
+  }
+
+  function renderImageFromTensor(tensor) {
+    const imageTensor = tf.tidy(() => tensor.squeeze().mul(255).clipByValue(0, 255).cast('int32'));
+    tf.browser.toPixels(imageTensor, canvas);
+    imageTensor.dispose();
+  }
+
+  async function predictFromLatent(z0, z1) {
+    const z = tf.tensor2d([[z0, z1]]);
+    const output = model.predict(z);
+    renderImageFromTensor(output);
+    z.dispose();
+    output.dispose();
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    if (!model) return;
+
+    const min_x = -15, max_x = 11;
+    const min_y = -13, max_y = 5;
+    const z0 = ((e.clientX - 0) / window.innerWidth) * (max_x - min_x) + min_x;
+    const z1 = ((e.clientY - 0) / window.innerHeight) * (max_y - min_y) + min_y;
+    predictFromLatent(z0, z1);
+  });
+
+  loadModel();
+</script>
